@@ -31,10 +31,16 @@ function callAPI() {
     console.log(response);
         var results = response.data;
         for (var i=0; i<10; i++) {
+            var $div = $("<div class='col-md-4'>")
             var $gif = $("<img>");
+            var $rating = $("<p class='rate'>");
+            $rating.text("Rating: " + results[i].rating.toUpperCase());
             $gif.attr("src", results[i].images.fixed_height.url);
-            
+            $div.append($gif);
+            $div.append($rating);
+            $(".row").prepend($div);
         }
+
     });
 }
 $(".query-button").on("click", callAPI);
