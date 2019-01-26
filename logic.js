@@ -14,6 +14,7 @@ writeButtons();
 function addButton() {
     $("#button-display").empty();
     var newBut=$("#search").val();
+    $("#search").val("");
     topics.push(newBut);
     writeButtons();
 }
@@ -32,10 +33,13 @@ function callAPI() {
         var results = response.data;
         for (var i=0; i<10; i++) {
             var $div = $("<div class='col-md-4'>")
-            var $gif = $("<img>");
+            var $gif = $("<img class='giphy'>");
             var $rating = $("<p class='rate'>");
             $rating.text("Rating: " + results[i].rating.toUpperCase());
-            $gif.attr("src", results[i].images.fixed_height.url);
+            $gif.attr("src", results[i].images.fixed_height_still.url);
+            $gif.attr("data-still",  results[i].images.fixed_height_still.url);
+            $gif.attr("data-animate", results[i].images.fixed_height.url);
+            $gif.attr("data-play", "pause");
             $div.append($gif);
             $div.append($rating);
             $(".row").prepend($div);
@@ -43,6 +47,24 @@ function callAPI() {
 
     });
 }
-$(".query-button").on("click", callAPI);
 
+function playPause() {
+    var rightNow = $(this).attr("data-play");
+    console.log(rightNow);
+    if (rightNow==="pause") {
+        var store = $(this).attr("data-animate");
+        $(this).attr("src", store);
+        $(this).attr("data-play", "play");
+
+    }
+    if (rightNow==="play") {
+        var store = $(this).attr("data-still");
+        $(this).attr("src", store);
+        $(this).attr("data-play", "pause");
+    }
+}
+// $(".query-button").on("click", callAPI);      this doesnt work because it only runs once. Since buttons are
+// being dynamically added to the page, JS doesnt recognize the new buttons as an on click event
+$(document).on("click", ".query-button", callAPI); 
+$(document).on("click", ".giphy", playPause);// this is the better way of doing the same thing.
 });
